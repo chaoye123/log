@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod=" 5 seconds" debug="false">
+
+    <property name="LOG_PATH" value="/logs/app-logback"/>
+    <property name="LOG_LEVEL" value="INFO"/>
+
+    <!--业务日志输出格式-->
+    <property name="NORMAL_PATTERN"
+              value="%date{HH:mm:ss.SSS,GMT+8}|%30.30(%class{30}.%method)|%-5level| %message \\(%file:%line\\) %-5(%thread) %X{userId}%X{operation}%n%xException"/>
+
+    <property name="SERVICE_OUTPUT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{INNER_TRACE_ID}] %-5level %logger{56} - %msg%n"/>
+
+    <!--SQL监控日志输出格式-->
+    <property name="SQL_OUTPUT_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{INNER_TRACE_ID}] %-5level %logger{56} - %msg%n"/>
+
+    <!--日志文件保留最大天数-->
+    <property name="MAX_DAY" value="30"/>
+    <property name="MAX_SIZE" value="100mb"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="fix_size_mem" class="com.yuan.demo.app.logback.utils.FixSizeMemAppender">
+        <size>100</size>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="appLogback" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/app_logback.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/pay-boss-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_DAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/root.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/root-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>${MAX_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_DAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/common-error.log</File>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/common-error-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_DAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DUBBO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/dubbo.log</File>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/dubbo-%d{yyyy-MM-dd}-%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_DAY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{56} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--<appender name="http_error_mail" class="ch.qos.logback.classic.net.SMTPAppender">-->
+        <!--&lt;!&ndash;<SMTPHost>smtp.exmail.qq.com</SMTPHost>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Username>monitor@sinx.com</Username>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Password>fPNjtHYmZpM7LoNW</Password>&ndash;&gt;-->
+        <!--&lt;!&ndash;<From>monitor@sinx.com</From>&ndash;&gt;-->
+        <!--<To>374334066@qq.com</To>-->
+
+        <!--<Subject>%X{mailTitle}</Subject>-->
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+            <!--<pattern>${ALARM_PATTERN}</pattern>-->
+        <!--</layout>-->
+    <!--</appender>-->
+
+    <!--<logger name="com.yuan.demo.app.logback" additivity="false">-->
+        <!--<level value="${LOG_LEVEL}"/>-->
+        <!--<appender-ref ref="appLogback"/>-->
+        <!--<appender-ref ref="STDOUT"/>-->
+        <!--<appender-ref ref="ERROR"/>-->
+    <!--</logger>-->
+
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="fix_size_mem"/>
+        <appender-ref ref="ROOT"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+
+</configuration>
