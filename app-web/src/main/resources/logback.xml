@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod=" 5 seconds" debug="false">
 
-    <property name="LOG_PATH" value="/logs/app-logback"/>
+    <property name="LOG_PATH" value="/logs/app-web"/>
     <property name="LOG_LEVEL" value="INFO"/>
 
     <!--业务日志输出格式-->
+    <property name="NORMAL_PATTERN"
+              value="%date{HH:mm:ss.SSS,GMT+8}|%30.30(%class{30}.%method)|%-5level| %message \\(%file:%line\\) %-5(%thread) %X{userId}%X{operation}%n%xException"/>
+
     <property name="SERVICE_OUTPUT_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{INNER_TRACE_ID}] %-5level %logger{56} - %msg%n"/>
 
@@ -18,14 +21,21 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+            <pattern>${NORMAL_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <appender name="appLogback" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/app_logback.log</File>
+    <appender name="fix_size_mem" class="com.yuan.demo.app.web.utils.FixSizeMemAppender">
+        <size>100</size>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${NORMAL_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="appWeb" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/app_web.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/app-logback-%d{yyyy-MM-dd}-%i.log.gz
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/app-web-%d{yyyy-MM-dd}-%i.log.gz
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -34,7 +44,7 @@
             <maxHistory>${MAX_DAY}</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+            <pattern>${NORMAL_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -55,7 +65,7 @@
             <maxHistory>${MAX_DAY}</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+            <pattern>${NORMAL_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -75,24 +85,7 @@
             <maxHistory>${MAX_DAY}</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="DUBBO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/dubbo.log</File>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/dubbo-%d{yyyy-MM-dd}-%i.log.gz
-            </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>${MAX_SIZE}</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>${MAX_DAY}</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
+            <pattern>${NORMAL_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -125,6 +118,7 @@
 
     <root level="${LOG_LEVEL}">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="fix_size_mem"/>
         <appender-ref ref="ROOT"/>
         <appender-ref ref="ERROR"/>
     </root>
