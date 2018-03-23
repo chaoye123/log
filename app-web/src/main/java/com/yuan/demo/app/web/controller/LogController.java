@@ -26,7 +26,7 @@ public class LogController {
                 StringBuilder s = new StringBuilder();
                 Collection<FixSizeLog> fixSizeLogs = FixSizeMemAppender.getAllLog();
                 for (FixSizeLog log : fixSizeLogs) {
-                   s.append("[" + log.getLoggerName() + "]</br>" + log + "</br>");
+                    appendString(s, "[", log.getLoggerName(), "]\n", log, "\n\n");
                 }
                 sb.append(s);
                 break;
@@ -34,5 +34,11 @@ public class LogController {
             }
         }
         return sb.toString();
+    }
+
+    private static void appendString(StringBuilder s, Object... params){
+        for(Object param : params) {
+            s.append(param);
+        }
     }
 }

@@ -8,6 +8,7 @@
         <module>app-log4j2</module>
         <module>app-logback</module>
         <module>app-web</module>
+        <module>app-jcl</module>
     </modules>
 
     <groupId>com.yuan.demo.app</groupId>

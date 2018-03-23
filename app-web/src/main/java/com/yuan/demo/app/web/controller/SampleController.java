@@ -1,7 +1,5 @@
 package com.yuan.demo.app.web.controller;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,11 +22,19 @@ public class SampleController {
     public String hello() {
 
         String result = "hello";
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 1000; i++) {
             logger.info("SampleController.hello() 请求, 请求参数是{}, result:{}", i, result);
         }
         logger.warn("测试 logger.warn()");
         return result;
+    }
+
+
+    @RequestMapping("/hello2")
+    @ResponseBody
+    public String hello2() {
+        logger.error("测试 hello2() exception", new NullPointerException());
+        return "exception";
     }
 
     @RequestMapping("/findUser/{userType}/{userNo}")
@@ -39,4 +45,6 @@ public class SampleController {
         logger.info("请求, 请求参数是{},{}, result:{}", userType, userNo, result);
         return result;
     }
+
+
 }

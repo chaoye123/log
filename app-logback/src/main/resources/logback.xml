@@ -79,21 +79,32 @@
         </encoder>
     </appender>
 
-    <appender name="DUBBO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${LOG_PATH}/dubbo.log</File>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/dubbo-%d{yyyy-MM-dd}-%i.log.gz
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <File>${LOG_PATH}/app_async_logback.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/app_async_logback-%d{yyyy-MM-dd}-%i.log.gz
             </fileNamePattern>
+
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>${MAX_SIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
+
             <maxHistory>${MAX_DAY}</maxHistory>
+
         </rollingPolicy>
+
         <encoder>
             <pattern>${SERVICE_OUTPUT_PATTERN}</pattern>
         </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout>
+            <Pattern>%X{first} %X{last} - %m%n</Pattern>
+        </layout>
     </appender>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -125,6 +136,7 @@
 
     <root level="${LOG_LEVEL}">
         <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
         <appender-ref ref="ROOT"/>
         <appender-ref ref="ERROR"/>
     </root>
